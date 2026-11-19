@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Photo Editor</string>
+    <string name="hint_open">Tap Open to choose a photo</string>
+    <string name="open">Open</string>
+    <string name="undo">Undo</string>
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="tab_transform">Transform</string>
+    <string name="tab_filters">Filters</string>
+    <string name="tab_adjust">Adjust</string>
+</resources>
