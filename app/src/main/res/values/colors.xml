@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#FF121212</color>
-    <color name="bar">#FF1E1E1E</color>
-    <color name="accent">#FF8C7CFF</color>
-    <color name="text">#FFFFFFFF</color>
-    <color name="text_dim">#FFAAAAAA</color>
-    <color name="ic_bg">#FF6C5CE7</color>
+    <color name="bg">#FFF7F7F7</color>
+    <color name="ic_bg">#FFF7F7F7</color>
 </resources>

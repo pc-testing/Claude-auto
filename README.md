@@ -1,31 +1,36 @@
-# Photo Editor (Android)
+# Dragon Run (Android)
 
-A simple, lightweight photo editor for Android 8.0 and newer.
+An offline endless-runner for Android, inspired by the game Chrome shows when
+you're offline: a little pixel dragon runs across the desert, jumping over
+cacti and ducking under flying birds. No internet needed.
 
 ## Download
 
-**[⬇ Download the latest APK](https://github.com/pc-testing/claude-auto/releases/latest/download/PhotoEditor.apk)**
+**[⬇ Download DragonRun.apk](https://github.com/pc-testing/claude-auto/releases/download/dragon-run/DragonRun.apk)**
 
-On your phone: open the link, download `PhotoEditor.apk`, tap it, and allow
-"Install unknown apps" for your browser when Android asks.
+On your phone: open the link, download `DragonRun.apk`, tap it, and allow
+"Install unknown apps" for your browser when Android asks. Needs Android 8.0+.
 
-## Features
+## How to play
 
-- **Open** any photo from your gallery or files (or "Share" a photo to the app from Google Photos/Gallery)
-- **Transform:** rotate left/right, flip horizontal/vertical, crop to 1:1, 4:5, 4:3, 16:9, reset
-- **Filters:** B&W, Sepia, Vintage, Vivid, Warm, Cool, Invert, Vignette
-- **Adjust:** brightness, contrast, saturation, warmth sliders with live preview
-- **Undo** (multiple steps)
-- **Save** full-quality JPEG to `Pictures/PhotoEditor`
-- **Share** straight to other apps
+- **Tap** anywhere to jump (hold longer for a higher jump, tap quickly for a short hop)
+- **Swipe down and hold** to duck under birds (also makes you drop faster mid-air)
+- Speed increases the longer you survive; birds appear after 300 points
+- Every 100 points: a chime. Every 700 points: day turns to night (and back)
+- High score is saved on the phone; tap the speaker icon (top-left) to mute
+- After a crash, tap to play again
 
 ## How it's built
 
-Every push to `main` triggers the GitHub Actions workflow in
-`.github/workflows/build.yml`, which builds the APK and publishes it as a new
-[Release](https://github.com/pc-testing/claude-auto/releases).
+- The game is a single HTML5 canvas file: `app/src/main/assets/game.html`
+  (also playable in any browser — open it directly; Space/↑ to jump, ↓ to duck)
+- `MainActivity` shows it full-screen in landscape using a WebView
+- Every push to the `dino-game` branch runs `.github/workflows/build.yml`,
+  which builds the APK and uploads it to the
+  [`dragon-run` release](https://github.com/pc-testing/claude-auto/releases/tag/dragon-run)
 
 To build locally (needs the Android SDK): `gradle assembleRelease` (Gradle 8.14)
 
 > Note: the APK is signed with the build machine's debug key, which changes per
-> build. If installing a newer version fails, uninstall the old one first.
+> build. If installing a newer version fails, uninstall the old one first
+> (your high score will reset).

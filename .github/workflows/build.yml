@@ -1,8 +1,8 @@
-name: Build APK
+name: Build Dragon Run APK
 
 on:
   push:
-    branches: [main]
+    branches: [dino-game]
   workflow_dispatch:
 
 permissions:
@@ -27,20 +27,28 @@ jobs:
         run: gradle assembleRelease --no-daemon --stacktrace
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk PhotoEditor.apk
+        run: cp app/build/outputs/apk/release/app-release.apk DragonRun.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: PhotoEditor-apk
-          path: PhotoEditor.apk
+          name: DragonRun-apk
+          path: DragonRun.apk
+
+      # A fixed "dragon-run" release always holds the newest APK, so the
+      # download link never changes (and never clashes with main's releases).
+      - name: Move dragon-run tag to this commit
+        run: |
+          git tag -f dragon-run
+          git push -f origin dragon-run
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Photo Editor v1.0.${{ github.run_number }}
+          tag_name: dragon-run
+          name: Dragon Run (latest build)
           body: |
-            Download **PhotoEditor.apk** below and open it on your Android phone (Android 8.0+).
-            Built from commit ${{ github.sha }}.
-          files: PhotoEditor.apk
-          make_latest: true
+            Download **DragonRun.apk** below and open it on your Android phone (Android 8.0+).
+            Build #${{ github.run_number }} from commit ${{ github.sha }}.
+          files: DragonRun.apk
+          overwrite_files: true
+          make_latest: false

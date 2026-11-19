@@ -5,11 +5,11 @@ plugins {
 def runNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
 
 android {
-    namespace = 'com.pctesting.photoeditor'
+    namespace = 'com.pctesting.dragonrun'
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.pctesting.photoeditor"
+        applicationId = "com.pctesting.dragonrun"
         minSdk = 26
         targetSdk = 34
         versionCode = runNumber
