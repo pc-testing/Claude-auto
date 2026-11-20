@@ -7,15 +7,16 @@
     help: 'Hold anywhere to fly up, let go to drop. Stay inside the tunnel and avoid the blocks.',
     reset: function () {
       this.y = 95; this.vy = 0; this.hold = 0; this.dist = 0; this.score = 0; this.t = 0;
-      this.speed = 150; this.segs = []; this.off = 0; this.blocks = []; this.nextBlock = 300; this.smoke = [];
+      this.speed = 125; this.segs = []; this.off = 0; this.blocks = []; this.nextBlock = 125 * 12; this.smoke = [];
       this.c = 100; this.cv = 0;
       var n = Math.ceil(A.W / SEG) + 3;
       for (var i = 0; i < n; i++) this.segs.push(this.makeSeg(true));
+      this.flat = 60; // a few more straight segments before the walls start to wiggle
     },
     makeSeg: function (flat) {
-      var gap = Math.max(78, 150 - this.t * 1.6);
+      var gap = Math.max(100, 168 - this.t * 0.8);
       if (!flat) {
-        this.cv += A.rand(-0.5, 0.5); this.cv = A.clamp(this.cv, -2.2, 2.2);
+        this.cv += A.rand(-0.3, 0.3); this.cv = A.clamp(this.cv, -1.2, 1.2);
         this.c += this.cv;
         if (this.c - gap / 2 < 26) { this.c = 26 + gap / 2; this.cv = Math.abs(this.cv); }
         if (this.c + gap / 2 > 194) { this.c = 194 - gap / 2; this.cv = -Math.abs(this.cv); }
@@ -27,23 +28,23 @@
     start: function () { this.hold = 0; },
     update: function (dt) {
       this.t += dt;
-      this.speed = Math.min(260, 150 + this.t * 2.5);
+      this.speed = Math.min(210, 125 + this.t * 1.2);
       var holding = this.hold > 0;
-      this.vy += (holding ? -820 : 620) * dt; this.vy = A.clamp(this.vy, -230, 260);
+      this.vy += (holding ? -540 : 430) * dt; this.vy = A.clamp(this.vy, -160, 175);
       this.y += this.vy * dt;
       this.dist += this.speed * dt; this.score = Math.floor(this.dist / 10);
       this.off += this.speed * dt;
-      while (this.off >= SEG) { this.off -= SEG; this.segs.shift(); this.segs.push(this.makeSeg(false)); }
+      while (this.off >= SEG) { this.off -= SEG; this.segs.shift(); this.segs.push(this.makeSeg(this.flat > 0)); if (this.flat > 0) this.flat--; }
       this.nextBlock -= this.speed * dt;
       if (this.nextBlock <= 0) {
         var s = this.segs[this.segs.length - 1];
-        this.blocks.push({ x: A.W + 10, y: A.rand(s.top + 8, s.bot - 38), w: 9, h: 30 });
-        this.nextBlock = A.rand(220, 360);
+        this.blocks.push({ x: A.W + 10, y: A.rand(s.top + 12, s.bot - 36), w: 8, h: 22 });
+        this.nextBlock = A.rand(380, 560);
       }
       if (holding && Math.random() < 0.5) this.smoke.push({ x: CX - 4, y: this.y + 8, t: 0.5 });
       var i;
       for (i = this.smoke.length - 1; i >= 0; i--) { var sm = this.smoke[i]; sm.x -= this.speed * dt; sm.t -= dt; if (sm.t <= 0) this.smoke.splice(i, 1); }
-      var box = { x: CX, y: this.y + 1, w: 22, h: 10 };
+      var box = { x: CX + 2, y: this.y + 3, w: 16, h: 7 };
       for (i = this.blocks.length - 1; i >= 0; i--) {
         var b = this.blocks[i]; b.x -= this.speed * dt;
         if (A.hit(box, b)) { A.over(); return; }
