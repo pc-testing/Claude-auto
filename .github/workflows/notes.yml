@@ -35,7 +35,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Update package-lock.json [skip ci]" package-lock.json
-            git push origin HEAD:notes-app
+            git push origin HEAD:notes-app || echo "::warning::Branch has moved on (re-run of an older commit); lockfile not pushed."
           fi
 
       - name: Build signed APK
