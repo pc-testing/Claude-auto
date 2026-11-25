@@ -1,5 +1,9 @@
 {
   "appId": "com.prabhat.notes",
   "appName": "Notes",
-  "webDir": "www"
+  "webDir": "www",
+  "backgroundColor": "#000000",
+  "android": {
+    "backgroundColor": "#000000"
+  }
 }

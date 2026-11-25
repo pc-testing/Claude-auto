@@ -99,7 +99,8 @@
 
 <script>
   const STORAGE_KEY = "notes_app_data";
-  let notes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  let notes = [];
+  const NotesStore = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.NotesStore;
   let activeId = null;
   let saveTimer = null;
   let selectMode = false;
@@ -116,7 +117,26 @@
   const mainHeader = document.getElementById("mainHeader");
   const selCount = document.getElementById("selCount");
 
-  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
+  // Notes live in a JSON file in app storage (NotesStore plugin).
+  // localStorage is kept as a mirror, and as the fallback in a plain browser.
+  function save() {
+    const data = JSON.stringify(notes);
+    try { localStorage.setItem(STORAGE_KEY, data); } catch (e) {}
+    if (NotesStore) NotesStore.save({ data }).catch(err => console.error("Save failed:", err));
+  }
+
+  async function loadNotes() {
+    let data = null;
+    if (NotesStore) {
+      try { data = (await NotesStore.load()).data; } catch (e) { console.error("Load failed:", e); }
+    }
+    if (data == null) {
+      // First run after the update: move notes over from localStorage.
+      data = localStorage.getItem(STORAGE_KEY);
+      if (data && NotesStore) NotesStore.save({ data }).catch(() => {});
+    }
+    try { notes = JSON.parse(data || "[]"); } catch (e) { notes = []; }
+  }
 
   function formatDate(ts) {
     const d = new Date(ts), now = new Date();
@@ -264,22 +284,29 @@
     openNote(n.id);
   }
 
+  function flushActive() {
+    clearTimeout(saveTimer);
+    const n = notes.find(x => x.id === activeId);
+    if (!n || (n.title === titleInput.value && n.body === bodyInput.value)) return;
+    n.title = titleInput.value;
+    n.body = bodyInput.value;
+    n.updatedAt = Date.now();
+    save();
+  }
+
   function persistActive() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      const n = notes.find(x => x.id === activeId);
-      if (!n) return;
-      n.title = titleInput.value;
-      n.body = bodyInput.value;
-      n.updatedAt = Date.now();
-      save();
-    }, 200);
+    saveTimer = setTimeout(flushActive, 200);
   }
+
+  // Save immediately if the app is sent to the background mid-typing.
+  document.addEventListener("visibilitychange", () => { if (document.hidden) flushActive(); });
 
   titleInput.addEventListener("input", persistActive);
   bodyInput.addEventListener("input", persistActive);
 
   document.getElementById("backBtn").addEventListener("click", () => {
+    flushActive();
     const n = notes.find(x => x.id === activeId);
     if (n && !n.title.trim() && !n.body.trim()) {
       notes = notes.filter(x => x.id !== activeId);
@@ -317,7 +344,7 @@
     }
   });
 
-  render();
+  loadNotes().then(render);
 </script>
 </body>
 </html>
