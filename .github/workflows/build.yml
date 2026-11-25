@@ -32,6 +32,7 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
+          sed -i '/org.gradle.java.home/d' gradle.properties  # Mac-only JDK path
           ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Rename APK
